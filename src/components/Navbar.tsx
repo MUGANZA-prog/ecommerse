@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { ShoppingCart as CartIcon, Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart } from './ShoppingCart';
-import Search from './searchBar';
+import { SearchBar } from './SearchBar';
 
-export const Navbar: React.FC = () => {
+interface NavbarProps {
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ searchTerm, onSearchChange }) => {
   const { state } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,10 +20,13 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <span className="text-xl font-bold text-blue-600">TechStore</span>
+            <Link to="/" className="text-xl font-bold text-blue-600">
+              TechStore
+            </Link>
           </div>
-          <div className='flex items-center'>
-            <Search/>
+
+          <div className="hidden md:flex items-center flex-1 justify-center px-8">
+            <SearchBar searchTerm={searchTerm} onSearchChange={onSearchChange} />
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -52,7 +61,10 @@ export const Navbar: React.FC = () => {
       {/* Mobile menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+          <div className="px-4 pt-2 pb-3 space-y-3">
+            <div className="w-full">
+              <SearchBar searchTerm={searchTerm} onSearchChange={onSearchChange} />
+            </div>
             <button
               onClick={() => {
                 setIsCartOpen(!isCartOpen);

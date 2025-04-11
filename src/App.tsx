@@ -1,12 +1,14 @@
-import { useState, useMemo } from 'react';
+import  { useState, useMemo } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { products } from './data/products';
 import { CartProvider } from './context/CartContext';
 import { Navbar } from './components/Navbar';
-import { ProductGrid } from './components/ProductGrid';
-import { FilterPanel } from './components/FilterPanel';
+import { Home } from './pages/Home';
+import { ProductDetail } from './pages/ProductDetail';
 import { FilterState } from './types';
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<FilterState>({
     categories: [],
     priceRange: [0, Math.max(...products.map(p => p.price))],
@@ -20,37 +22,38 @@ function App() {
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = filters.categories.length === 0 || 
         filters.categories.includes(product.category);
       const matchesPrice = product.price >= filters.priceRange[0] && 
         product.price <= filters.priceRange[1];
       const matchesRating = product.rating >= filters.minRating;
 
-      return matchesCategory && matchesPrice && matchesRating;
+      return matchesSearch && matchesCategory && matchesPrice && matchesRating;
     });
-  }, [filters]);
+  }, [filters, searchTerm]);
 
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <main className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-1">
-              <FilterPanel
+    <BrowserRouter>
+      <CartProvider>
+        <div className="min-h-screen bg-gray-100">
+          <Navbar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+          <Routes>
+            <Route path="/" element={
+              <Home
                 filters={filters}
                 onFilterChange={setFilters}
                 categories={categories}
                 maxPrice={Math.max(...products.map(p => p.price))}
+                filteredProducts={filteredProducts}
               />
-            </div>
-            <div className="md:col-span-3">
-              <ProductGrid products={filteredProducts} />
-            </div>
-          </div>
-        </main>
-      </div>
-    </CartProvider>
+            } />
+            <Route path="/product/:id" element={<ProductDetail />} />
+          </Routes>
+        </div>
+      </CartProvider>
+    </BrowserRouter>
   );
 }
 
