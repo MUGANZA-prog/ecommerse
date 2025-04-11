@@ -3,7 +3,7 @@ import { ShoppingCart as CartIcon, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart } from './ShoppingCart';
-import SearchBar from './SearchBar';
+import SearchBar from './Search';
 
 interface NavbarProps {
   searchTerm: string;
