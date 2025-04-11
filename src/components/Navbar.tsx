@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingCart as CartIcon, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { ShoppingCart } from './ShoppingCart';
+import Search from './searchBar';
 
 export const Navbar: React.FC = () => {
   const { state } = useCart();
@@ -14,6 +15,9 @@ export const Navbar: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <span className="text-xl font-bold text-blue-600">TechStore</span>
+          </div>
+          <div className='flex items-center'>
+            <Search/>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
